@@ -1,10 +1,42 @@
+import string
 import sys
 import numpy
-import random 
+import random
+import time
+import array
 
 #Puzzle 1 - Number Allocation
 def p1_number_allocation():
     return 0
+
+#Todo - TB Helper Functions
+class Tower_piece:
+    def __init__(self, type:string, width:int, strength:int, cost:int):
+        self.type = type
+        self.width = width
+        self.strength = strength
+        self.cost = cost
+    
+    def toString(self):
+        print(f"{self.type}, {self.width}, {self.strength}, {self.cost}")
+    
+
+
+def tower_fitness(score:int):
+    return 0
+
+#Returns an array of Tower_pieces
+def pieces2arr(file):
+    piece_list = []
+
+    with open(file, "r") as f:
+        for line in f:
+            stripped_line = line.rstrip()
+            temp_piece = stripped_line.split(", ")
+            temp_Tower_piece = Tower_piece(temp_piece[0], temp_piece[1], temp_piece[2], temp_piece[3])
+            piece_list.append(temp_Tower_piece)
+
+    return piece_list
 
 #Puzzle 2 - Tower Building
 def p2_tower_building():
@@ -20,11 +52,19 @@ if __name__ == '__main__':
     # time to solve
     problem_time = int(sys.argv[3])
 
+    temparr = pieces2arr(file_name)
+
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
-        p1_number_allocation()
+        start_time = time.time()
+        while (time.time() - start_time) < problem_time:
+            p1_number_allocation()
+            
     elif(puzzle_id == 2):
         #Run Tower Builder Puzzle
-        p2_tower_building()
+        start_time = time.time()
+        while (time.time() - start_time) < problem_time:
+            p2_tower_building()
+
     else:
         print("Incorrect Puzzle Identifier")
