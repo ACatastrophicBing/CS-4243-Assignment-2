@@ -4,6 +4,7 @@ import numpy
 import random
 import time
 import array
+from pathlib import Path
 
 #Puzzle 1 - Number Allocation
 def p1_number_allocation():
@@ -49,10 +50,15 @@ if __name__ == '__main__':
     puzzle_id = int(sys.argv[1])
     # input file
     file_name = sys.argv[2]
+
+    #Incorrect file handler
+    file_path = Path(file_name)
+    if(file_path.is_file() != True):
+        print(f"Incorrect file path. {file_path} does not exist")
+        exit()
+
     # time to solve
     problem_time = int(sys.argv[3])
-
-    temparr = pieces2arr(file_name)
 
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
