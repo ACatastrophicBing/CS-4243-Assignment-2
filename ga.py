@@ -7,6 +7,13 @@ import array
 from pathlib import Path
 
 
+def mutate(x):
+    """
+    :param x: percentage of chance to mutate (0 to 100)
+    :return boolean: If it is within the x% chance we set for mutation, mutate
+    """
+    return random.uniform(0, 1) <= x/100
+
 def bucket_distributor(numList):
     bucket1 = []
     bucket2 = []
@@ -31,7 +38,7 @@ def population_maker(parent):
 def crossover(parent):
     swap_1, swap_2 = random.sample(range(4), 2)
     selection = random.sample(range(10),4)
-    swap_1_indeces = random.sample(range(10),selection+1)
+    swap_1_indeces = random.sample(range(10), selection + 1)
     swap_2_indeces = random.sample(range(10), selection + 1)
     chromosome1 = parent[swap_1]
     chromosome2 = parent[swap_2]
@@ -49,11 +56,15 @@ def p1_genetic_solver(parent):
     :return: new population
     """
     culling_factor = 30 # What percentage of population we are culling
-
-
+    mutation_factor = 5
+    population = population_maker(parent)
+    if mutate(mutation_factor):
+        parent_mutating = random.sample(range(len(population)))
+        population[parent_mutating] = crossover(population[parent_mutating])
     fitness = p1_fitness(population)
-
-    return population
+    max_fitness = max(fitness)
+    best_parent = fitness.index(max_fitness)
+    return best_parent
 
 # Can edit this to take in certain factors like wanted population size to handle the next population selection instead
 def p1_fitness(population):
