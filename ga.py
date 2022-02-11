@@ -6,43 +6,66 @@ import time
 import array
 from pathlib import Path
 
-#Puzzle 1 - Number Allocation
-def p1_number_allocation():
-    return 0
 
 def bucket_distributor(numList):
-    bucket1 = {}
-    bucket2 = {}
-    bucket3 = {}
-    bucket4 = {}
+    bucket1 = []
+    bucket2 = []
+    bucket3 = []
+    bucket4 = []
     for i in range(9):
-        bucket1.update({i : numList[i]})
+        bucket1[i] = numList[i]
     for i in range(10, 19):
-        bucket2.update({i : numList[i]})
+        bucket2[i] = numList[i]
     for i in range(20, 29):
-        bucket3.update({i : numList[i]})
+        bucket3[i] = numList[i]
     for i in range(30, 39):
-        bucket4.update({i : numList[i]})
+        bucket4[i] = numList[i]
     return bucket1, bucket2, bucket3, bucket4
 
 #Puzzle 1 Solve
-def p1_genetic_solver(iterations):
+def p1_genetic_solver(population):
+    """
+    :param population: Takes in a list of 4 bins
+    :return: new population
+    """
     culling_factor = 30 # What percentage of population we are culling
-    best_parents = 3 # How many best parents are we keeping each generation?
+    fitness = p1_fitness(population)
 
-    return 0
+    return population
 
 # Can edit this to take in certain factors like wanted population size to handle the next population selection instead
 def p1_fitness(population):
     """
-    :param population: Takes in a population and finds the fitness for each parent
+    :param population: Takes in a population(list of 4 bins) and finds the fitness for each parent
     :return fitness: A list of cumulative percentages for each parent to be chosen
     """
     k = 1 # fitness multiplier
-    weighted_chance = [parent ** k for parent in population]
-    fitness_sum = sum(weighted_chance)
-    return weighted_chance/fitness_sum
+    fitness = []
+    for parent in population:
+        fitness.append(bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2])) # Subtract bin4_score if we want to use it
+    fitness_sum = sum(fitness)
+    return fitness/fitness_sum
 
+def bin1_score(bin):
+    score = 1
+    for gene in bin:
+        score *= gene
+    return score
+
+def bin2_score(bin):
+    score = 0
+    for gene in bin:
+        score += gene
+    return score
+
+def bin3_score(bin):
+    score = max(bin) - min(bin)
+
+def bin4_score(bin):
+    score = 0
+    for gene in bin:
+        score += abs(gene)
+    return score
 
 #Todo - TB Helper Functions
 class Tower_piece:
@@ -181,15 +204,19 @@ if __name__ == '__main__':
         print(f"Incorrect file path. {file_path} does not exist")
         exit()
 
+    file_data = [0]*40 # TODO : Need to set this equal to file data
+
     # time to solve
     problem_time = int(sys.argv[3])
 
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
         start_time = time.time()
+        population = bucket_distributor(file_data)
         while (time.time() - start_time) < problem_time:
-            p1_number_allocation()
-            
+            population = p1_genetic_solver(population)
+
+
     elif(puzzle_id == 2):
         #Run Tower Builder Puzzle
         start_time = time.time()
