@@ -129,6 +129,17 @@ def pieces2arr(file):
 
     return piece_list
 
+#Returns an array of numbers
+def numbers2arr(file):
+    numbers = []
+
+    with open(file,"r") as f:
+        for line in f:
+            stripped_line = line.rstrip()
+            numbers.append(float(stripped_line))
+
+    return numbers
+
 #Puzzle 2 - Tower Building
 def p2_tower_building():
     return 0
@@ -147,14 +158,13 @@ if __name__ == '__main__':
         print(f"Incorrect file path. {file_path} does not exist")
         exit()
 
-    file_data = [0]*40 # TODO : Need to set this equal to file data
-
     # time to solve
     problem_time = int(sys.argv[3])
 
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
         start_time = time.time()
+        file_data = numbers2arr(file_name)
         population = bucket_distributor(file_data)
         while (time.time() - start_time) < problem_time:
             population = p1_genetic_solver(population)
