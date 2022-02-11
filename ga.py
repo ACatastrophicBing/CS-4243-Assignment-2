@@ -15,36 +15,48 @@ def mutate(x):
     return random.uniform(0, 1) <= x/100
 
 def bucket_distributor(numList):
-    bucket1 = []
-    bucket2 = []
-    bucket3 = []
-    bucket4 = []
-    for i in range(9):
+    bucket1 = [0]*10
+    bucket2 = [0]*10
+    bucket3 = [0]*10
+    bucket4 = [0]*10
+    parent = []
+    for i in range(10):
         bucket1[i] = numList[i]
-    for i in range(10, 19):
-        bucket2[i] = numList[i]
-    for i in range(20, 29):
-        bucket3[i] = numList[i]
-    for i in range(30, 39):
-        bucket4[i] = numList[i]
-    return bucket1, bucket2, bucket3, bucket4
+    parent.append(bucket1)
+    for i in range(10, 20):
+        bucket2[i-10] = numList[i]
+    parent.append(bucket2)
+    for i in range(20, 30):
+        bucket3[i-20] = numList[i]
+    parent.append(bucket3)
+    for i in range(30, 40):
+        bucket4[i-30] = numList[i]
+    parent.append(bucket4)
+    return [bucket1, bucket2, bucket3, bucket4]
 
 def population_maker(parent):
     population = []
-    for i in range(200):
+    for i in range(10): #Changed to 10 for easier debugging
         population.append(crossover(parent))
     return population
 
 def crossover(parent):
     swap_1, swap_2 = random.sample(range(4), 2)
     selection = random.sample(range(10),4)
-    swap_1_indeces = random.sample(range(10), selection + 1)
-    swap_2_indeces = random.sample(range(10), selection + 1)
+    selection = [x + 1 for x in selection]
+    swap_1_indeces = random.sample(range(10), len(selection))
+    swap_2_indeces = random.sample(range(10), len(selection))
+    # TODO For some reason the allocations in memory are crossing over, needs a fix
+    # TODO Also, for some reason there seems to be a point in which the indexing doesn't work, causing duplicates which is bad
+    print(swap_1)
+    print(parent[swap_1])
     chromosome1 = parent[swap_1]
     chromosome2 = parent[swap_2]
-    for i in range(selection+1):
-        chromosome2 = parent[swap_1][swap_2_indeces[i]]
-        chromosome1 = parent[swap_2][swap_1_indeces[i]]
+    placeholder_chromosome2 = parent[swap_2]
+    # print("Swapping bin %d and have the stuff %s" %(swap_1+1,parent[swap_1]))
+    for i in range(len(selection)):
+        chromosome2[swap_2_indeces[i]] = chromosome1[swap_1_indeces[i]]
+        chromosome1[swap_1_indeces[i]] = placeholder_chromosome2[swap_2_indeces[i]]
     parent[swap_1] = chromosome1
     parent[swap_2] = chromosome2
     return parent
@@ -59,12 +71,14 @@ def p1_genetic_solver(parent):
     mutation_factor = 5
     population = population_maker(parent)
     if mutate(mutation_factor):
+        # print("Mutating")
         parent_mutating = random.sample(range(len(population)))
         population[parent_mutating] = crossover(population[parent_mutating])
     fitness = p1_fitness(population)
     max_fitness = max(fitness)
     best_parent = fitness.index(max_fitness)
-    return best_parent
+    print("Finished")
+    return population[best_parent]
 
 # Can edit this to take in certain factors like wanted population size to handle the next population selection instead
 def p1_fitness(population):
@@ -77,7 +91,12 @@ def p1_fitness(population):
     for parent in population:
         fitness.append(bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2])) # Subtract bin4_score if we want to use it
     fitness_sum = sum(fitness)
-    return fitness/fitness_sum
+    fit_weight = []
+    prev_fit = 0
+    for i in range(len(fitness)):
+        fit_weight.append(fitness[i]/fitness_sum + prev_fit)
+        prev_fit += fitness[i] / fitness_sum
+    return fit_weight
 
 def bin1_score(bin):
     score = 1
@@ -93,6 +112,7 @@ def bin2_score(bin):
 
 def bin3_score(bin):
     score = max(bin) - min(bin)
+    return score
 
 def bin4_score(bin):
     score = 0
