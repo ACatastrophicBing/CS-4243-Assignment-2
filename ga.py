@@ -71,9 +71,8 @@ def p1_genetic_solver(parent):
     mutation_factor = 5
     population = population_maker(parent)
     if mutate(mutation_factor):
-        # print("Mutating")
-        parent_mutating = random.sample(range(len(population)))
-        population[parent_mutating] = crossover(population[parent_mutating])
+        parent_mutating = random.sample(range(len(population)),1)
+        population[parent_mutating[0]] = crossover(population[parent_mutating[0]])
     fitness = p1_fitness(population)
     max_fitness = max(fitness)
     best_parent = fitness.index(max_fitness)
@@ -183,6 +182,7 @@ if __name__ == '__main__':
 
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
+        #TODO: Never seems to end
         start_time = time.time()
         file_data = numbers2arr(file_name)
         population = bucket_distributor(file_data)
