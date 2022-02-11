@@ -22,13 +22,35 @@ def bucket_distributor(numList):
         bucket4[i] = numList[i]
     return bucket1, bucket2, bucket3, bucket4
 
+def population_maker(parent):
+    population = []
+    for i in range(200):
+        population.append(crossover(parent))
+    return population
+
+def crossover(parent):
+    swap_1, swap_2 = random.sample(range(4), 2)
+    selection = random.sample(range(10),4)
+    swap_1_indeces = random.sample(range(10),selection+1)
+    swap_2_indeces = random.sample(range(10), selection + 1)
+    chromosome1 = parent[swap_1]
+    chromosome2 = parent[swap_2]
+    for i in range(selection+1):
+        chromosome2 = parent[swap_1][swap_2_indeces[i]]
+        chromosome1 = parent[swap_2][swap_1_indeces[i]]
+    parent[swap_1] = chromosome1
+    parent[swap_2] = chromosome2
+    return parent
+
 #Puzzle 1 Solve
-def p1_genetic_solver(population):
+def p1_genetic_solver(parent):
     """
     :param population: Takes in a list of 4 bins
     :return: new population
     """
     culling_factor = 30 # What percentage of population we are culling
+
+
     fitness = p1_fitness(population)
 
     return population
