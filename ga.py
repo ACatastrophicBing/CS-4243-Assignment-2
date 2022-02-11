@@ -25,6 +25,24 @@ def bucket_distributor(numList):
         bucket4.update({i : numList[i]})
     return bucket1, bucket2, bucket3, bucket4
 
+#Puzzle 1 Solve
+def p1_genetic_solver(iterations):
+    culling_factor = 30 # What percentage of population we are culling
+    best_parents = 3 # How many best parents are we keeping each generation?
+
+    return 0
+
+# Can edit this to take in certain factors like wanted population size to handle the next population selection instead
+def p1_fitness(population):
+    """
+    :param population: Takes in a population and finds the fitness for each parent
+    :return fitness: A list of cumulative percentages for each parent to be chosen
+    """
+    k = 1 # fitness multiplier
+    weighted_chance = [parent ** k for parent in population]
+    fitness_sum = sum(weighted_chance)
+    return weighted_chance/fitness_sum
+
 
 #Todo - TB Helper Functions
 class Tower_piece:
