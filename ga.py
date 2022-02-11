@@ -23,6 +23,7 @@ def bucket_distributor(numList):
         bucket3.update({i : numList[i]})
     for i in range(30, 39):
         bucket4.update({i : numList[i]})
+    return bucket1, bucket2, bucket3, bucket4
 
 
 #Todo - TB Helper Functions
