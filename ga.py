@@ -10,6 +10,21 @@ from pathlib import Path
 def p1_number_allocation():
     return 0
 
+def bucket_distributor(numList):
+    bucket1 = {}
+    bucket2 = {}
+    bucket3 = {}
+    bucket4 = {}
+    for i in range(9):
+        bucket1.update({i : numList[i]})
+    for i in range(10, 19):
+        bucket2.update({i : numList[i]})
+    for i in range(20, 29):
+        bucket3.update({i : numList[i]})
+    for i in range(30, 39):
+        bucket4.update({i : numList[i]})
+
+
 #Todo - TB Helper Functions
 class Tower_piece:
     def __init__(self, type:string, width:int, strength:int, cost:int):
