@@ -8,18 +8,18 @@ from pathlib import Path
 
 
 def bucket_distributor(numList):
-    bucket1 = {}
-    bucket2 = {}
-    bucket3 = {}
-    bucket4 = {}
+    bucket1 = []
+    bucket2 = []
+    bucket3 = []
+    bucket4 = []
     for i in range(9):
-        bucket1.update({i : numList[i]})
+        bucket1[i] = numList[i]
     for i in range(10, 19):
-        bucket2.update({i : numList[i]})
+        bucket2[i] = numList[i]
     for i in range(20, 29):
-        bucket3.update({i : numList[i]})
+        bucket3[i] = numList[i]
     for i in range(30, 39):
-        bucket4.update({i : numList[i]})
+        bucket4[i] = numList[i]
     return bucket1, bucket2, bucket3, bucket4
 
 #Puzzle 1 Solve
