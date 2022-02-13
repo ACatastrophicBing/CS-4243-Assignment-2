@@ -46,13 +46,11 @@ def crossover(parent):
     selection = [x + 1 for x in selection]
     swap_1_indeces = random.sample(range(10), len(selection))
     swap_2_indeces = random.sample(range(10), len(selection))
-    # TODO For some reason the allocations in memory are crossing over, needs a fix
-    # TODO Also, for some reason there seems to be a point in which the indexing doesn't work, causing duplicates which is bad
-    print(swap_1)
-    print(parent[swap_1])
-    chromosome1 = parent[swap_1]
-    chromosome2 = parent[swap_2]
-    placeholder_chromosome2 = parent[swap_2]
+    # print(swap_1)
+    # print(parent[swap_1])
+    chromosome1 = parent[swap_1].copy()
+    chromosome2 = parent[swap_2].copy()
+    placeholder_chromosome2 = parent[swap_2].copy()
     # print("Swapping bin %d and have the stuff %s" %(swap_1+1,parent[swap_1]))
     for i in range(len(selection)):
         chromosome2[swap_2_indeces[i]] = chromosome1[swap_1_indeces[i]]
@@ -76,7 +74,7 @@ def p1_genetic_solver(parent):
     fitness = p1_fitness(population)
     max_fitness = max(fitness)
     best_parent = fitness.index(max_fitness)
-    print("Finished")
+    # print("Parent Found")
     return population[best_parent]
 
 # Can edit this to take in certain factors like wanted population size to handle the next population selection instead
@@ -96,6 +94,9 @@ def p1_fitness(population):
         fit_weight.append(fitness[i]/fitness_sum + prev_fit)
         prev_fit += fitness[i] / fitness_sum
     return fit_weight
+
+def scoring(parent):
+    return bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2])
 
 def bin1_score(bin):
     score = 1
@@ -276,8 +277,14 @@ if __name__ == '__main__':
         start_time = time.time()
         file_data = numbers2arr(file_name)
         population = bucket_distributor(file_data)
+        best_one = population.copy()
         while (time.time() - start_time) < problem_time:
             population = p1_genetic_solver(population)
+            if scoring(population) > scoring(best_one):
+                best_one = population.copy()
+        print("Best list is :")
+        print(best_one)
+        print("With a score of %f " % scoring(best_one))
 
 
     elif(puzzle_id == 2):
