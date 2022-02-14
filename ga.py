@@ -1,3 +1,4 @@
+import statistics
 import string
 import sys
 import numpy
@@ -38,7 +39,7 @@ def bucket_distributor(numList):
 
 def population_maker(parent):
     population = []
-    for i in range(100): #This is our population size, basically we make a population of 100 every generation
+    for i in range(400): #This is our population size, basically we make a population of 100 every generation
         population.append(crossover(parent))
     return population
 
@@ -96,6 +97,10 @@ def p1_fitness(population):
     k = 2 # fitness exponential
     global best_part1
     global bestscore_part1
+    global worst_part1
+    global worstscore_part1
+    global mid_part1
+    global midscore_part1
     fitness = []
     for parent in population:
         fitness.append(((bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2]) - bin4_score(parent[3]) ** 3)) ** k) # Subtract bin4_score if we want to use it
@@ -105,13 +110,21 @@ def p1_fitness(population):
         if scoring(parent) > bestscore_part1: # This is what finds the best fit
             best_part1 = parent.copy()
             bestscore_part1 = scoring(best_part1)
+            print('best: ')
             print(bestscore_part1)
+        if scoring(parent) < worstscore_part1: # This is what finds the worst fit
+            worst_part1 = parent.copy()
+            worstscore_part1 = scoring(worst_part1)
+            print('worst: ')
+            print(worstscore_part1)
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
     for i in range(len(fitness)):
         fit_weight.append(fitness[i]/fitness_sum + prev_fit)
         prev_fit += fitness[i] / fitness_sum
+    fitness.copy().sort()
+    midscore_part1 = ((fitness[4] + fitness[5]) / 2)
     return fit_weight
 
 def childSelector(fitness):
@@ -289,11 +302,11 @@ def tower_testing(file):
 
 if __name__ == '__main__':
     # command line inputs
-    program_name = sys.argv[0]
+    program_name = '__main__'
     # puzzle to solve
-    puzzle_id = int(sys.argv[1])
+    puzzle_id = 1
     # input file
-    file_name = sys.argv[2]
+    file_name = 'p1_testing.txt'
 
     #Incorrect file handler
     file_path = Path(file_name)
@@ -302,7 +315,7 @@ if __name__ == '__main__':
         exit()
 
     # time to solve
-    problem_time = int(sys.argv[3])
+    problem_time = 30
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
         #TODO: Never seems to end
@@ -311,12 +324,24 @@ if __name__ == '__main__':
         population = bucket_distributor(file_data)
         best_part1 = population.copy()
         bestscore_part1 = scoring(best_part1)
+
+        median_part1 = population.copy()
+        medianscore_part1 = scoring(median_part1)
+
+        worst_part1 = population.copy()
+        worstscore_part1 = scoring(worst_part1)
         print("Starting")
         while (time.time() - start_time) < problem_time:
             population = p1_genetic_solver(population)
         print("Best list is :")
         print(best_part1)
         print("With a score of %f " % bestscore_part1)
+        print("Median list is :")
+        print(midscore_part1)
+        print("With a score of %f " % medianscore_part1)
+        print("Worst list is :")
+        print(worst_part1)
+        print("With a score of %f " % worstscore_part1)
 
 
     elif(puzzle_id == 2):
