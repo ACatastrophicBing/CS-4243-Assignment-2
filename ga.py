@@ -332,7 +332,6 @@ Pass in an array of pieces and the number of towers to be generated
 
 Returns entire population
 '''
-
 def create_tower_population(total_piece_arr, n:int):
     population_return = []
     #For each tower in the population
@@ -477,6 +476,7 @@ def p2_tower_building(all_pieces_arr, orig_pop, pop_num):
     population3 = tower_mutation(population2, all_pieces_arr)
     population4 = tower_repopulation(all_pieces_arr, population3, pop_num)
 
+    #Sort by score. Highest scores on top, lowest on bottom
     population4.sort(key=lambda x: x.score, reverse=True)
 
     return population4
