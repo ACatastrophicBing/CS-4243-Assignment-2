@@ -116,7 +116,7 @@ def p1_fitness(population):
         if scoring(parent) > bestscore_part1: # This is what finds the best fit
             best_part1 = parent.copy()
             bestscore_part1 = scoring(best_part1)
-            print('Best: %f' %bestscore_part1)
+            #print('Best: %f' %bestscore_part1)
         if scoring(parent) < worstscore_part1: # This is what finds the worst fit
             worst_part1 = parent.copy()
             worstscore_part1 = scoring(worst_part1)
@@ -233,7 +233,7 @@ class Tower:
 
     def tower_fitness(self):
         #Check if base is a Door
-        if(self.pieces):
+        if not self.pieces:
             self.score = 0
             self.valid = 0
             return
@@ -455,29 +455,32 @@ def p2_tower_building(all_pieces_arr, orig_pop, pop_num):
     #Place file pieces into array for fetching
 
     population = tower_culling(orig_pop)
-    population = tower_crossover(population)
-    population = tower_mutation(population, all_pieces_arr)
-    population = tower_repopulation(all_pieces_arr, population, pop_num)
-    population = tower_culling(orig_pop)
+    population2 = tower_crossover(population)
+    population3 = tower_mutation(population2, all_pieces_arr)
+    population4 = tower_repopulation(all_pieces_arr, population3, pop_num)
 
-    return population
+    population4.sort(key=lambda x: x.score, reverse=True)
+
+    return population4
 
 if __name__ == '__main__':
     # command line inputs
-    program_name = '__main__'
+    program_name = sys.argv[0]
     # puzzle to solve
-    puzzle_id = 1
+    puzzle_id = int(sys.argv[1])
     # input file
-    file_name = 'p1_testing.txt'
+    file_name = sys.argv[2]
+
+    problem_time = int(sys.argv[3])
 
     #Incorrect file handler
     file_path = Path(file_name)
+    print(file_path)
     if(file_path.is_file() != True):
         print(f"Incorrect file path. {file_path} does not exist")
         exit()
 
     # time to solve
-    problem_time = 30
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
         #TODO: Never seems to end
@@ -495,6 +498,7 @@ if __name__ == '__main__':
         print("Starting")
         while (time.time() - start_time) < problem_time:
             population = p1_genetic_solver(population)
+        
         print("Best list is :")
         print(best_part1)
         print("With a score of %f " % bestscore_part1)
@@ -503,7 +507,7 @@ if __name__ == '__main__':
         print("Worst list is :")
         print(worst_part1)
         print("With a score of %f " % worstscore_part1)
-
+        
 
     elif(puzzle_id == 2):
         #Run Tower Builder Puzzle
@@ -512,18 +516,26 @@ if __name__ == '__main__':
         '''
         NEED TO SET
         '''
-        pop_size = 3
+        pop_size = 10
         piece_arr = pieces2arr(file_name)
         orig_pop = create_tower_population(piece_arr, pop_size)
 
         orig_pop.sort(key=lambda x: x.score, reverse=True)
+        current_gen_pop = []
         best = orig_pop[0]
 
+        generation_count = 0
+
         while (time.time() - start_time) < problem_time:
-            best = p2_tower_building(piece_arr, orig_pop, pop_size)[0]
+            current_gen_pop = p2_tower_building(piece_arr, orig_pop, pop_size)
+            generation_count += 1
+
+            if(generation_count % 50 == 0):
+                print(f"Current best on generation {generation_count} with a score of {best.getScore()}\n")
+                best.print_pieces()
 
         print("The best tower was:\n")
         best.print_pieces()
-        print(f"The tower achieved a score of {best.getScore()}")
+        print(f"The tower achieved a score of {best.getScore()} after {generation_count} generations")
     else:
         print("Incorrect Puzzle Identifier")
