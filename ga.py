@@ -362,7 +362,7 @@ def tower_crossover(arr):
         return arr
     
     #Do crossover of pieces
-    iterable = 2
+    iterable = 3
     while iterable < len(arr) - 1:
         tower_one = arr[iterable] #1st to swap
         tower_two = arr[iterable + 1] #2nd to swap
@@ -517,26 +517,30 @@ if __name__ == '__main__':
         '''
         NEED TO SET
         '''
-        pop_size = 10
+        pop_size = 100
         piece_arr = pieces2arr(file_name)
         orig_pop = create_tower_population(piece_arr, pop_size)
 
         orig_pop.sort(key=lambda x: x.score, reverse=True)
         current_gen_pop = []
-        best = orig_pop[0]
-
+        best = Tower([])
         generation_count = 0
 
         while (time.time() - start_time) < problem_time:
             current_gen_pop = p2_tower_building(piece_arr, orig_pop, pop_size)
+            if(current_gen_pop[0].getScore() > best.getScore()):
+                best = current_gen_pop[0]
+
             generation_count += 1
 
-            if(generation_count % 50 == 0):
+            if(generation_count % 100 == 0):
                 print(f"Current best on generation {generation_count} with a score of {best.getScore()}\n")
                 best.print_pieces()
+
 
         print("The best tower was:\n")
         best.print_pieces()
         print(f"The tower achieved a score of {best.getScore()} after {generation_count} generations")
+
     else:
         print("Incorrect Puzzle Identifier")

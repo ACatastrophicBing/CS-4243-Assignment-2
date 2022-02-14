@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["2", "pieces.txt", "1"],
+            "args": ["2", "pieces.txt", "10"],
             "console": "integratedTerminal"
         }
     ]
