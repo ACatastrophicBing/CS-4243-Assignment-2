@@ -179,6 +179,11 @@ class Tower:
 
     def tower_fitness(self):
         #Check if base is a Door
+        if(self.pieces):
+            self.score = 0
+            self.valid = 0
+            return
+    
         if(self.pieces[0].type != "Door"):
             self.score = 0
             self.valid = 0
@@ -306,7 +311,6 @@ def tower_crossover(arr):
     while iterable < len(arr) - 1:
         tower_one = arr[iterable] #1st to swap
         tower_two = arr[iterable + 1] #2nd to swap
-        print(tower_one.printPieces())
 
         pieces_to_swap_amt = len(tower_one.getPieces())//2
         pieces_to_swap_t2 = len(tower_two.getPieces())//2
@@ -368,19 +372,16 @@ def tower_mutation(tower_arr, global_pieces):
             flag = True
             while flag:
                 if(random_num > random_chance):
-                    print("hello")
                     piece = random.choice(global_pieces)
-                    print(piece.toString())
                     tower_pieces = tower.getPieces()
                     tower_pieces.append(piece)
-                    if check_duplicate_pieces(tower_pieces) == False:
-                        print("hello2")
+                    if check_duplicate_pieces(tower_pieces):
+                        tower_pieces.pop()
+                        
+                    else:
                         tower.setPieces(tower_pieces)
                         flag = False
-                        break
-                    else:
-                        continue
-                flag = False
+                
             tower.tower_fitness()
             new_tower_arr.append(tower)
 
@@ -406,33 +407,16 @@ def tower_repopulation(pieces_arr, current_towers, population_size):
     return full_pop
 
 #Puzzle 2 - Tower Building
-def p2_tower_building(file):
+def p2_tower_building(all_pieces_arr, orig_pop, pop_num):
     #Place file pieces into array for fetching
-    all_pieces_arr = pieces2arr(file)
-    '''
-    POPULATION NUMBER | TO BE SET
-    '''
-    population_num = 3
-    population = create_tower_population(all_pieces_arr, population_num)
 
-    print("Gen 0")
-    for p in population:
-        print("Tower")
-        p.print_pieces()
-        print("\n")
-    
-
-    population = tower_culling(population)
+    population = tower_culling(orig_pop)
     population = tower_crossover(population)
     population = tower_mutation(population, all_pieces_arr)
-    population = tower_repopulation(all_pieces_arr, population, population_num)
+    population = tower_repopulation(all_pieces_arr, population, pop_num)
+    population = tower_culling(orig_pop)
 
-    print("\nGen 1")
-    for p in population:
-        print("Tower")
-        p.print_pieces()
-
-    return 0
+    return population
 
 if __name__ == '__main__':
     # command line inputs
@@ -470,8 +454,19 @@ if __name__ == '__main__':
     elif(puzzle_id == 2):
         #Run Tower Builder Puzzle
         start_time = time.time()
-        #while (time.time() - start_time) < problem_time:
-        p2_tower_building(file_name)
 
+        pop_size = 3
+        piece_arr = pieces2arr(file_name)
+        orig_pop = create_tower_population(piece_arr, pop_size)
+
+        orig_pop.sort(key=lambda x: x.score, reverse=True)
+        best = orig_pop[0]
+
+        while (time.time() - start_time) < problem_time:
+            best = p2_tower_building(piece_arr, orig_pop, pop_size)[0]
+
+        print("The best tower was:\n")
+        best.print_pieces()
+        print(f"The tower achieved a score of {best.getScore()}")
     else:
         print("Incorrect Puzzle Identifier")
