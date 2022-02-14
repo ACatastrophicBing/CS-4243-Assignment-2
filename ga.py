@@ -83,6 +83,9 @@ def p1_genetic_solver(parent):
         population[parent_mutating[0]] = crossover(population[parent_mutating[0]])
     fitness = p1_fitness(population)
 
+    new_pop,newfit = culling(fitness,population)
+    next_parent = new_pop[childSelector(newfit)]
+    return next_parent
 
     ### READ HERE :
     # These next three lines are if you just want to select the best fit of each population
@@ -91,9 +94,23 @@ def p1_genetic_solver(parent):
     # best_parent = fitness.index(max_fitness)
     # return population[best_parent]
 
-    next_parent = population[childSelector(fitness)]
-    return next_parent
+    # next_parent = population[childSelector(fitness)]
+    # return next_parent
     # print("Parent Found")
+
+def culling(fitness, population):
+    bottomhalf = fitness.copy()
+    bottomhalf.sort()
+    bottomhalf = bottomhalf[math.floor(len(fitness)/30):-1]
+    indeces = []
+    for i in bottomhalf:
+        indeces.append(fitness.index(i))
+    return_pop = []
+    return_fit = []
+    for i in indeces:
+        return_pop.append(population[i])
+        return_fit.append(fitness[i])
+    return return_pop,return_fit
 
 # Can edit this to take in certain factors like wanted population size to handle the next population selection instead
 def p1_fitness(population):
