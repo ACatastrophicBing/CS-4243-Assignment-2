@@ -1,3 +1,4 @@
+import math
 import statistics
 import string
 import sys
@@ -124,9 +125,9 @@ def p1_fitness(population):
     # print(fitness)
     median_solver = fitness.copy()
     median_solver.sort()
-    midscore_part1 = ((median_solver[4] + median_solver[5]) / 2)
+    midscore_part1 = ((pow(median_solver[4],1/k) + pow(median_solver[5],1/k)) / 2)
     # print(median_solver)
-    # print('Median: %f from %f + %f / 2' % (midscore_part1,median_solver[4],median_solver[5]))
+    print('Median: %f from %f + %f / 2' % (midscore_part1,pow(median_solver[4],1/k),pow(median_solver[5],1/k)))
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
