@@ -2,6 +2,7 @@ import math
 import statistics
 import string
 import sys
+from tempfile import TemporaryDirectory
 import numpy as np
 import random
 import time
@@ -414,35 +415,25 @@ def tower_mutation(tower_arr, global_pieces):
     random_num = random.uniform(0,1)
     random_chance = 0.7
 
-    for tower in tower_arr:
-        duplicate_indices = check_duplicate_pieces(tower.getPieces())
+    for index in range(len(tower_arr)):
+        #checking duplicates that arose through crossover
+        duplicate_indices = check_duplicate_pieces(tower_arr[index].getPieces())
         if duplicate_indices:
-            for index in duplicate_indices:
-                tower.getPieces().pop[index]
-                tower.setPieces(tower.getPieces())
-            tower.tower_fitness()
-            new_tower_arr.append(tower)
-        else:
-            flag = True
-            while flag:
-                if(random_num > random_chance):
-                    piece = random.choice(global_pieces)
-                    tower_pieces = tower.getPieces()
-                    tower_pieces.append(piece)
-                    if check_duplicate_pieces(tower_pieces):
-                        tower_pieces.pop()
-                        
-                    else:
-                        tower.setPieces(tower_pieces)
-                        flag = False
-                
-            tower.tower_fitness()
-            new_tower_arr.append(tower)
-
+            for index2 in duplicate_indices:
+                tower_arr[index].getPieces().pop[index2]
+                tower_arr[index].setPieces(tower_arr[index].getPieces())
+            tower_arr[index].tower_fitness()
+    
         #random mutation
-    #for tower in tower_arr:
+    if(random_num > random_chance):
+        index_choice = random.choice(range(0, len(tower_arr)))
+        temp_pieces = tower_arr[index_choice].getPieces()
         
-    return new_tower_arr
+        #Scramble the pieces :)
+        random.shuffle(temp_pieces)
+        tower_arr[index_choice].setPieces(temp_pieces)
+        
+    return tower_arr
 
 '''
 Repopulates with new towers to fill to original population size.
@@ -519,6 +510,9 @@ if __name__ == '__main__':
         #Run Tower Builder Puzzle
         start_time = time.time()
 
+        '''
+        NEED TO SET
+        '''
         pop_size = 3
         piece_arr = pieces2arr(file_name)
         orig_pop = create_tower_population(piece_arr, pop_size)
