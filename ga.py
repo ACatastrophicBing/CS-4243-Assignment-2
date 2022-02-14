@@ -40,10 +40,14 @@ def bucket_distributor(numList):
 def population_maker(parent):
     population = []
     for i in range(400): #This is our population size, basically we make a population of 100 every generation
-        population.append(crossover(parent))
+        randomizer = crossover(parent).copy()
+        # print(randomizer)
+        population.append(randomizer)
+        # print(population)
     return population
 
 def crossover(parent):
+    child = parent.copy()
     swap_1, swap_2 = random.sample(range(4), 2)
     selection = random.sample(range(10),4)
     selection = [x + 1 for x in selection]
@@ -58,9 +62,9 @@ def crossover(parent):
     for i in range(len(selection)):
         chromosome2[swap_2_indeces[i]] = chromosome1[swap_1_indeces[i]]
         chromosome1[swap_1_indeces[i]] = placeholder_chromosome2[swap_2_indeces[i]]
-    parent[swap_1] = chromosome1
-    parent[swap_2] = chromosome2
-    return parent
+    child[swap_1] = chromosome1
+    child[swap_2] = chromosome2
+    return child
 
 #Puzzle 1 Solve
 def p1_genetic_solver(parent):
@@ -71,6 +75,7 @@ def p1_genetic_solver(parent):
     culling_factor = 30 # What percentage of population we are culling
     mutation_factor = 5
     population = population_maker(parent)
+    # print(population)
     if mutate(mutation_factor):
         parent_mutating = random.sample(range(len(population)),1)
         population[parent_mutating[0]] = crossover(population[parent_mutating[0]])
@@ -110,16 +115,17 @@ def p1_fitness(population):
         if scoring(parent) > bestscore_part1: # This is what finds the best fit
             best_part1 = parent.copy()
             bestscore_part1 = scoring(best_part1)
-            print('best: ')
-            print(bestscore_part1)
+            print('Best: %f' %bestscore_part1)
         if scoring(parent) < worstscore_part1: # This is what finds the worst fit
             worst_part1 = parent.copy()
             worstscore_part1 = scoring(worst_part1)
-            print('worst: ')
-            print(worstscore_part1)
+            print('Worst: %f' %worstscore_part1)
+    # print(fitness)
     median_solver = fitness.copy()
     median_solver.sort()
     midscore_part1 = ((median_solver[4] + median_solver[5]) / 2)
+    # print(median_solver)
+    # print('Median: %f from %f + %f / 2' % (midscore_part1,median_solver[4],median_solver[5]))
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
