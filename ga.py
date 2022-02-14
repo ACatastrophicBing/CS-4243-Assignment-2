@@ -503,7 +503,6 @@ if __name__ == '__main__':
         print("With a score of %f " % bestscore_part1)
         print("Median list is :")
         print(midscore_part1)
-        print("With a score of %f " % medianscore_part1)
         print("Worst list is :")
         print(worst_part1)
         print("With a score of %f " % worstscore_part1)
