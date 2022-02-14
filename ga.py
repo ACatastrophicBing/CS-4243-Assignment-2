@@ -138,13 +138,13 @@ def p1_fitness(population):
         if scoring(parent) < worstscore_part1: # This is what finds the worst fit
             worst_part1 = parent.copy()
             worstscore_part1 = scoring(worst_part1)
-            print('Worst: %f' %worstscore_part1)
+            # print('Worst: %f' %worstscore_part1)
     # print(fitness)
     median_solver = fitness.copy()
     median_solver.sort()
     midscore_part1 = ((pow(median_solver[4],1/k) + pow(median_solver[5],1/k)) / 2)
     # print(median_solver)
-    print('Median: %f from %f + %f / 2' % (midscore_part1,pow(median_solver[4],1/k),pow(median_solver[5],1/k)))
+    # print('Median: %f from %f + %f / 2' % (midscore_part1,pow(median_solver[4],1/k),pow(median_solver[5],1/k)))
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
