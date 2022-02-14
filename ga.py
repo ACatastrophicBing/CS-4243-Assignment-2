@@ -526,7 +526,7 @@ if __name__ == '__main__':
         best = Tower([])
         generation_count = 0
 
-        while (time.time() - start_time) < problem_time:
+        while ((time.time() - start_time) < problem_time):
             current_gen_pop = p2_tower_building(piece_arr, orig_pop, pop_size)
             if(current_gen_pop[0].getScore() > best.getScore()):
                 best = current_gen_pop[0]
