@@ -524,12 +524,19 @@ if __name__ == '__main__':
         orig_pop.sort(key=lambda x: x.score, reverse=True)
         current_gen_pop = []
         best = Tower([])
+        worst = Tower([])
         generation_count = 0
+        list_of_best = [best]
+        list_of_worst = [worst]
 
         while (time.time() - start_time) < problem_time:
             current_gen_pop = p2_tower_building(piece_arr, orig_pop, pop_size)
             if(current_gen_pop[0].getScore() > best.getScore()):
                 best = current_gen_pop[0]
+                list_of_best.append(best)
+            if (current_gen_pop[0].getScore() < worst.getScore() or worst.getScore() < 0):
+                worst = current_gen_pop[0]
+                list_of_worst.append(worst)
 
             generation_count += 1
 
@@ -541,6 +548,11 @@ if __name__ == '__main__':
         print("The best tower was:\n")
         best.print_pieces()
         print(f"The tower achieved a score of {best.getScore()} after {generation_count} generations")
+
+        for towers in list_of_best:
+            print(f"The best tower building process : {towers.getScore()} ")
+        for towers in list_of_worst:
+            print(f"The worst tower building process : {towers.getScore()} ")
 
     else:
         print("Incorrect Puzzle Identifier")
