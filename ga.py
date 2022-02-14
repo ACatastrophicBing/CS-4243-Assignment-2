@@ -117,14 +117,14 @@ def p1_fitness(population):
             worstscore_part1 = scoring(worst_part1)
             print('worst: ')
             print(worstscore_part1)
+    median_solver = fitness.copy().sort()
+    midscore_part1 = ((median_solver[4] + median_solver[5]) / 2)
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
     for i in range(len(fitness)):
         fit_weight.append(fitness[i]/fitness_sum + prev_fit)
         prev_fit += fitness[i] / fitness_sum
-    fitness.copy().sort()
-    midscore_part1 = ((fitness[4] + fitness[5]) / 2)
     return fit_weight
 
 def childSelector(fitness):
