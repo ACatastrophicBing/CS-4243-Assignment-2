@@ -117,7 +117,8 @@ def p1_fitness(population):
             worstscore_part1 = scoring(worst_part1)
             print('worst: ')
             print(worstscore_part1)
-    median_solver = fitness.copy().sort()
+    median_solver = fitness.copy()
+    median_solver.sort()
     midscore_part1 = ((median_solver[4] + median_solver[5]) / 2)
     fitness_sum = sum(fitness)
     fit_weight = []
