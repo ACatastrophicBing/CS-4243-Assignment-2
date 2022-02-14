@@ -6,6 +6,8 @@ import time
 import array
 from pathlib import Path
 
+best_part1 = None
+bestscore_part1 = 0
 
 def mutate(x):
     """
@@ -36,7 +38,7 @@ def bucket_distributor(numList):
 
 def population_maker(parent):
     population = []
-    for i in range(10): #Changed to 10 for easier debugging
+    for i in range(100): #This is our population size, basically we make a population of 100 every generation
         population.append(crossover(parent))
     return population
 
@@ -72,10 +74,18 @@ def p1_genetic_solver(parent):
         parent_mutating = random.sample(range(len(population)),1)
         population[parent_mutating[0]] = crossover(population[parent_mutating[0]])
     fitness = p1_fitness(population)
-    max_fitness = max(fitness)
-    best_parent = fitness.index(max_fitness)
+
+
+    ### READ HERE :
+    # These next three lines are if you just want to select the best fit of each population
+    # The next_parent return below is for randomized selection based off of the fitness
+    # max_fitness = max(fitness)
+    # best_parent = fitness.index(max_fitness)
+    # return population[best_parent]
+
+    next_parent = population[childSelector(fitness)]
+    return next_parent
     # print("Parent Found")
-    return population[best_parent]
 
 # Can edit this to take in certain factors like wanted population size to handle the next population selection instead
 def p1_fitness(population):
@@ -83,10 +93,19 @@ def p1_fitness(population):
     :param population: Takes in a population(list of 4 bins) and finds the fitness for each parent
     :return fitness: A list of cumulative percentages for each parent to be chosen
     """
-    k = 1 # fitness multiplier
+    k = 2 # fitness exponential
+    global best_part1
+    global bestscore_part1
     fitness = []
     for parent in population:
-        fitness.append(bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2])) # Subtract bin4_score if we want to use it
+        fitness.append(((bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2]) - bin4_score(parent[3]) ** 3)) ** k) # Subtract bin4_score if we want to use it
+        # putting this to the power of K to allow for bigger scores to be weighted differently if you want their value to be higher
+        # Change k for different results
+        # Also the abs value is since what if there's like a cool MASSIVE negative number?
+        if scoring(parent) > bestscore_part1: # This is what finds the best fit
+            best_part1 = parent.copy()
+            bestscore_part1 = scoring(best_part1)
+            print(bestscore_part1)
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
@@ -94,6 +113,20 @@ def p1_fitness(population):
         fit_weight.append(fitness[i]/fitness_sum + prev_fit)
         prev_fit += fitness[i] / fitness_sum
     return fit_weight
+
+def childSelector(fitness):
+    """
+    :param fitness: takes in the fitness list and randomly generates a number in between 0 and 1 to figure out what child the algorithm is keeping
+    :return prev_index: The index for the child that is being kept
+    """
+    selection = random.uniform(0, 1)
+    prev_index = -1
+    for fit in fitness:
+        if abs(fit) >= selection: # Using absolute value since there might be an instance in which we want a high boi
+            break
+        else:
+            prev_index += 1
+    return prev_index
 
 def scoring(parent):
     return bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2])
@@ -434,21 +467,20 @@ if __name__ == '__main__':
 
     # time to solve
     problem_time = int(sys.argv[3])
-
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
         #TODO: Never seems to end
         start_time = time.time()
         file_data = numbers2arr(file_name)
         population = bucket_distributor(file_data)
-        best_one = population.copy()
+        best_part1 = population.copy()
+        bestscore_part1 = scoring(best_part1)
+        print("Starting")
         while (time.time() - start_time) < problem_time:
             population = p1_genetic_solver(population)
-            if scoring(population) > scoring(best_one):
-                best_one = population.copy()
         print("Best list is :")
-        print(best_one)
-        print("With a score of %f " % scoring(best_one))
+        print(best_part1)
+        print("With a score of %f " % bestscore_part1)
 
 
     elif(puzzle_id == 2):
