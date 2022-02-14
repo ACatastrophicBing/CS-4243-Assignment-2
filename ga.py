@@ -1,3 +1,4 @@
+import statistics
 import string
 import sys
 from tempfile import TemporaryDirectory
@@ -39,11 +40,15 @@ def bucket_distributor(numList):
 
 def population_maker(parent):
     population = []
-    for i in range(100): #This is our population size, basically we make a population of 100 every generation
-        population.append(crossover(parent))
+    for i in range(400): #This is our population size, basically we make a population of 100 every generation
+        randomizer = crossover(parent).copy()
+        # print(randomizer)
+        population.append(randomizer)
+        # print(population)
     return population
 
 def crossover(parent):
+    child = parent.copy()
     swap_1, swap_2 = random.sample(range(4), 2)
     selection = random.sample(range(10),4)
     selection = [x + 1 for x in selection]
@@ -58,9 +63,9 @@ def crossover(parent):
     for i in range(len(selection)):
         chromosome2[swap_2_indeces[i]] = chromosome1[swap_1_indeces[i]]
         chromosome1[swap_1_indeces[i]] = placeholder_chromosome2[swap_2_indeces[i]]
-    parent[swap_1] = chromosome1
-    parent[swap_2] = chromosome2
-    return parent
+    child[swap_1] = chromosome1
+    child[swap_2] = chromosome2
+    return child
 
 #Puzzle 1 Solve
 def p1_genetic_solver(parent):
@@ -71,6 +76,7 @@ def p1_genetic_solver(parent):
     culling_factor = 30 # What percentage of population we are culling
     mutation_factor = 5
     population = population_maker(parent)
+    # print(population)
     if mutate(mutation_factor):
         parent_mutating = random.sample(range(len(population)),1)
         population[parent_mutating[0]] = crossover(population[parent_mutating[0]])
@@ -97,6 +103,10 @@ def p1_fitness(population):
     k = 2 # fitness exponential
     global best_part1
     global bestscore_part1
+    global worst_part1
+    global worstscore_part1
+    global mid_part1
+    global midscore_part1
     fitness = []
     for parent in population:
         fitness.append(((bin1_score(parent[0]) + bin2_score(parent[1]) + bin3_score(parent[2]) - bin4_score(parent[3]) ** 3)) ** k) # Subtract bin4_score if we want to use it
@@ -106,7 +116,17 @@ def p1_fitness(population):
         if scoring(parent) > bestscore_part1: # This is what finds the best fit
             best_part1 = parent.copy()
             bestscore_part1 = scoring(best_part1)
-            print(bestscore_part1)
+            print('Best: %f' %bestscore_part1)
+        if scoring(parent) < worstscore_part1: # This is what finds the worst fit
+            worst_part1 = parent.copy()
+            worstscore_part1 = scoring(worst_part1)
+            print('Worst: %f' %worstscore_part1)
+    # print(fitness)
+    median_solver = fitness.copy()
+    median_solver.sort()
+    midscore_part1 = ((median_solver[4] + median_solver[5]) / 2)
+    # print(median_solver)
+    # print('Median: %f from %f + %f / 2' % (midscore_part1,median_solver[4],median_solver[5]))
     fitness_sum = sum(fitness)
     fit_weight = []
     prev_fit = 0
@@ -444,11 +464,11 @@ def p2_tower_building(all_pieces_arr, orig_pop, pop_num):
 
 if __name__ == '__main__':
     # command line inputs
-    program_name = sys.argv[0]
+    program_name = '__main__'
     # puzzle to solve
-    puzzle_id = int(sys.argv[1])
+    puzzle_id = 1
     # input file
-    file_name = sys.argv[2]
+    file_name = 'p1_testing.txt'
 
     #Incorrect file handler
     file_path = Path(file_name)
@@ -457,7 +477,7 @@ if __name__ == '__main__':
         exit()
 
     # time to solve
-    problem_time = int(sys.argv[3])
+    problem_time = 30
     if(puzzle_id == 1):
         #Run Number Allocation Puzzle
         #TODO: Never seems to end
@@ -466,12 +486,23 @@ if __name__ == '__main__':
         population = bucket_distributor(file_data)
         best_part1 = population.copy()
         bestscore_part1 = scoring(best_part1)
+
+        median_part1 = population.copy()
+        medianscore_part1 = scoring(median_part1)
+
+        worst_part1 = population.copy()
+        worstscore_part1 = scoring(worst_part1)
         print("Starting")
         while (time.time() - start_time) < problem_time:
             population = p1_genetic_solver(population)
         print("Best list is :")
         print(best_part1)
         print("With a score of %f " % bestscore_part1)
+        print("Median list is :")
+        print(midscore_part1)
+        print("Worst list is :")
+        print(worst_part1)
+        print("With a score of %f " % worstscore_part1)
 
 
     elif(puzzle_id == 2):
